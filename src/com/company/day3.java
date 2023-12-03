@@ -7,25 +7,28 @@ public class day3 {
 
     public static void day3() {
         int y = 0;
+        int row = 0;
         ArrayList<HashMap<Integer, Boolean>> grid = new ArrayList<>(140);
-        for(HashMap<Integer, Boolean> hm : grid) {
-
+        for(int x = 0; x < 140; x++) {
+            grid.add(x, new HashMap<>());
         }
+
         LinkedList<Coordinate> coordinates = new LinkedList<>();
         char[] symbols = {'+', '#', '@', '$', '-', '*', '/', '=', '&'};
         String numbers = "123456789";
 
         try {
-            File myObj = new File("input3.test.txt");
+            File myObj = new File("input3.txt");
             Scanner myReader = new Scanner(myObj);
 
             while (myReader.hasNextLine()) {
                 String data = myReader.nextLine();
-                System.out.print("Line: " + y + " ");
+                row = data.length();
+               // System.out.print("Line: " + y + " ");
 
                 for(int x = 0; x < data.length(); x++) {
                     if(new String(symbols).contains(data.charAt(x) + "")) {
-                        System.out.print(data.charAt(x));
+                      //  System.out.print(data.charAt(x));
                         grid.get(y).put(x, true);
                     }
                     else if(new String(numbers).contains(data.charAt(x) + "")) {
@@ -33,15 +36,17 @@ public class day3 {
                         int offset = 1;
                         while(new String(numbers).contains(data.charAt(x + offset) + "")) {
                             num += data.charAt(x+offset);
+                            //System.out.println(y+ " " + x + " " + offset + " " + row);
                             offset++;
+                            if(x + offset == 140) break;
                         }
                         int Inum = Integer.parseInt(num);
-                        coordinates.add(new Coordinate(Inum, x, x+offset));
-                        x += offset;
+                        coordinates.add(new Coordinate(Inum, x, x+offset, y));
+                        x += offset-1;
                     }
                 }
                 y++;
-                System.out.println("");
+              //  System.out.println("");
             }
             myReader.close();
         } catch(FileNotFoundException e) {
@@ -49,31 +54,55 @@ public class day3 {
             e.printStackTrace();
         }
 
+        int count = 0;
+
         for(Coordinate c : coordinates) {
-            System.out.println(c);
-        }
-        System.out.println(grid.get(0).get(0));
-    }
+            int spread = c.end - c.start + 2;
+            //System.out.println(c.value + " " + spread);
+            boolean touching = false;
 
-    public class Row {
-        public Row() {
-
+            if(c.start != 0) {
+                if(grid.get(c.row).get(c.start-1) != null) touching = true;
+            }
+            if(c.end != row) {
+                if(grid.get(c.row).get(c.end) != null) touching = true;
+            }
+            if(c.row != 0) {
+                for(int x = 0; x < spread; x++) {
+                    if(c.start-1+x != -1 && c.start-1+spread != y+1) if(grid.get(c.row - 1).get(c.start-1+x) != null) touching = true;
+                }
+            }
+            if(c.row != y-1) {
+                System.out.print("row: " + c.row + " val: " + c.value + " spread: " + (c.row+1) + " ");
+                for(int x = 0; x < spread; x++) {
+                    System.out.print(" " + (c.start-1+x) + " ");
+                    if(c.start-1+x != -1 && c.start-1+spread != y+1) if(grid.get(c.row + 1).get(c.start-1+x) != null) touching = true;
+                }
+                System.out.println();
+            }
+            if(touching) {
+               // System.out.println(c.value);
+                count += c.value;
+            }
         }
+        System.out.println(count);
     }
 
     public static class Coordinate {
-        public Coordinate(int value, int start, int end) {
+        public Coordinate(int value, int start, int end, int row) {
             this.value = value;
             this.start = start;
             this.end = end;
+            this.row = row;
         }
         public int value;
         public int start;
         public int end;
+        public int row;
 
         @Override
         public String toString() {
-            return value + " " + start + " " + end;
+            return value + " " + start + " " + end + " " + row;
         }
     }
 
