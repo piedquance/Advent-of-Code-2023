@@ -14,11 +14,11 @@ public class day3 {
         }
 
         LinkedList<Coordinate> coordinates = new LinkedList<>();
-        char[] symbols = {'+', '#', '@', '$', '-', '*', '/', '=', '&'};
-        String numbers = "123456789";
+        String symbols = "~`!@#$%^&*()_+-={}[]:\"\'|\\<>,?/";
+        String numbers = "0123456789";
 
         try {
-            File myObj = new File("input3.txt");
+            File myObj = new File("input3.test4.txt");
             Scanner myReader = new Scanner(myObj);
 
             while (myReader.hasNextLine()) {
@@ -38,7 +38,7 @@ public class day3 {
                             num += data.charAt(x+offset);
                             //System.out.println(y+ " " + x + " " + offset + " " + row);
                             offset++;
-                            if(x + offset == 140) break;
+                            if(x + offset == row) break;
                         }
                         int Inum = Integer.parseInt(num);
                         coordinates.add(new Coordinate(Inum, x, x+offset, y));
@@ -58,7 +58,6 @@ public class day3 {
 
         for(Coordinate c : coordinates) {
             int spread = c.end - c.start + 2;
-            //System.out.println(c.value + " " + spread);
             boolean touching = false;
 
             if(c.start != 0) {
@@ -73,18 +72,21 @@ public class day3 {
                 }
             }
             if(c.row != y-1) {
-                System.out.print("row: " + c.row + " val: " + c.value + " spread: " + (c.row+1) + " ");
+               // System.out.print("row: " + c.row + " val: " + c.value + " spread: " + (c.row+1) + " ");
                 for(int x = 0; x < spread; x++) {
-                    System.out.print(" " + (c.start-1+x) + " ");
+                   // System.out.print(" " + (c.start-1+x) + " ");
                     if(c.start-1+x != -1 && c.start-1+spread != y+1) if(grid.get(c.row + 1).get(c.start-1+x) != null) touching = true;
                 }
-                System.out.println();
+               // System.out.println();
             }
             if(touching) {
                // System.out.println(c.value);
                 count += c.value;
+                c.touch = true;
             }
         }
+
+        for(Coordinate c: coordinates) System.out.println(c.row + " " + c.value + " (" + c.start + ", " + c.end + ") " + c.touch);
         System.out.println(count);
     }
 
@@ -94,11 +96,13 @@ public class day3 {
             this.start = start;
             this.end = end;
             this.row = row;
+            this.touch = false;
         }
         public int value;
         public int start;
         public int end;
         public int row;
+        public boolean touch;
 
         @Override
         public String toString() {
