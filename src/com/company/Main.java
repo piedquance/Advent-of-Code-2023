@@ -9,7 +9,7 @@ import java.util.Scanner;
 public class Main {
 
     public static void main(String[] args) {
-        day5.day5();
+        day6.day6();
 
     }
 }
