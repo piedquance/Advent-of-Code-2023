@@ -25,7 +25,7 @@ public class day6 {
 
         double x1 = (-b + d) / (-2);
         double x2 = (-b - d) / (-2);
-        
+
         System.out.println(Math.floor(x2) - Math.floor(x1));
         double x = Math.floor(x2) - Math.floor(x1);
         System.out.println(BigDecimal.valueOf(x));
